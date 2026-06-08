@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Coin Flipper</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0f0f23;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.ob{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;justify-content:center;align-items:center}.ob.hide{display:none}
+.oc{background:#1a1a3e;border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center}
+.oc h2{color:#feca57;font-size:28px;margin-bottom:8px}.oc .sub{color:#888;font-size:14px}
+.stps{margin:25px 0;text-align:left;display:flex;flex-direction:column;gap:18px}
+.st{display:flex;gap:14px;align-items:flex-start}.st .n{width:32px;height:32px;border-radius:50%;background:#feca57;color:#000;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.st h4{font-size:14px;margin-bottom:2px}.st p{font-size:12px;color:#888;line-height:1.5}
+.oc button{padding:14px 40px;border:none;border-radius:10px;background:#feca57;color:#000;font-size:16px;font-weight:700;cursor:pointer}
+.oc .sk{color:#555;font-size:12px;cursor:pointer;margin-top:12px;display:inline-block}
+.app{display:none;max-width:500px;width:100%;padding:20px;text-align:center}.app.show{display:block}
+h1{margin-bottom:5px}h1 span{background:linear-gradient(90deg,#feca57,#e17055);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub2{color:#666;margin-bottom:25px;font-size:14px}
+.coin-wrap{perspective:800px;margin-bottom:25px;height:160px;display:flex;align-items:center;justify-content:center}
+.coin{width:140px;height:140px;border-radius:50%;position:relative;transform-style:preserve-3d;transition:transform 0.1s}
+.coin.flipping{animation:flip 0.6s ease-in-out}
+@keyframes flip{0%{transform:rotateY(0)}50%{transform:rotateY(1800deg)}100%{transform:rotateY(3600deg)}}
+.coin .side{position:absolute;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:60px;backface-visibility:hidden;border:4px solid}
+.coin .heads{background:linear-gradient(135deg,#feca57,#f0932b);border-color:#f0932b}
+.coin .tails{background:linear-gradient(135deg,#74b9ff,#0984e3);border-color:#0984e3;transform:rotateY(180deg)}
+.result{font-size:28px;font-weight:700;margin-bottom:20px;min-height:40px}
+.result.heads{color:#feca57}.result.tails{color:#74b9ff}
+.flip-btn{padding:16px 50px;border:none;border-radius:14px;background:linear-gradient(135deg,#feca57,#e17055);color:#fff;font-size:20px;font-weight:700;cursor:pointer;margin-bottom:25px;transition:.1s}
+.flip-btn:active{transform:scale(0.95)}
+.flip-btn:disabled{opacity:0.5;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}
+.stats .stat{background:#1a1a3e;border-radius:12px;padding:15px;text-align:center}
+.stats .stat .val{font-size:28px;font-weight:700}.stats .stat .lbl{font-size:11px;color:#666;margin-top:3px}
+.stats .stat.heads .val{color:#feca57}.stats .stat.tails .val{color:#74b9ff}.stats .stat.total .val{color:#fff}
+.bar{display:flex;height:24px;border-radius:12px;overflow:hidden;margin-bottom:20px}
+.bar .h{background:#feca57;transition:width 0.3s}.bar .t{background:#74b9ff;transition:width 0.3s}
+.bar-labels{display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:20px}
+.history{background:#1a1a3e;border-radius:14px;padding:15px;text-align:left}
+.history h3{color:#888;font-size:13px;margin-bottom:10px}
+.history .item{display:inline-block;padding:4px 10px;border-radius:12px;font-size:12px;margin:2px}
+.history .item.heads{background:#2a2a1e;color:#feca57}.history .item.tails{background:#1a2a3e;color:#74b9ff}
+</style></head><body>
+<div class="ob" id="ob"><div class="oc">
+<h2>Coin Flipper</h2><p class="sub">Flip a virtual coin and track statistics</p>
+<div class="stps">
+<div class="st"><div class="n">1</div><div><h4>Click Flip</h4><p>Click the Flip button. The coin spins with a 3D animation.</p></div></div>
+<div class="st"><div class="n">2</div><div><h4>See the Result</h4><p>Heads or Tails appears. The coin visual updates to show the winning side.</p></div></div>
+<div class="st"><div class="n">3</div><div><h4>Track Statistics</h4><p>Keep flipping! See the percentage split between Heads and Tails build over time.</p></div></div>
+</div>
+<button onclick="start()">Start Flipping</button>
+<div class="sk" onclick="start()">Skip</div>
+</div></div>
+<div class="app" id="app">
+<h1><span>Coin Flipper</span></h1><p class="sub2">Heads or Tails?</p>
+<div class="coin-wrap"><div class="coin" id="coin"><div class="side heads">\ud83e\ude99</div><div class="side tails">\ud83e\ude99</div></div></div>
+<div class="result" id="result">Click Flip to start</div>
+<button class="flip-btn" id="flipBtn" onclick="flip()">Flip!</button>
+<div class="stats"><div class="stat heads"><div class="val" id="hCount">0</div><div class="lbl">Heads</div></div><div class="stat tails"><div class="val" id="tCount">0</div><div class="lbl">Tails</div></div><div class="stat total"><div class="val" id="total">0</div><div class="lbl">Total</div></div></div>
+<div class="bar"><div class="h" id="hBar" style="width:50%"></div><div class="t" id="tBar" style="width:50%"></div></div>
+<div class="bar-labels"><span id="hPct">50% Heads</span><span id="tPct">50% Tails</span></div>
+<div class="history"><h3>History</h3><div id="hist"></div></div></div>
+<script>
+var heads=0,tails=0,results=[];
+function start(){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show');localStorage.setItem('cf_seen','1')}
+if(localStorage.getItem('cf_seen')){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show')}
+function flip(){
+var btn=document.getElementById('flipBtn');btn.disabled=true;
+var coin=document.getElementById('coin');coin.classList.add('flipping');
+var result=Math.random()<0.5?'heads':'tails';
+setTimeout(function(){coin.classList.remove('flipping');
+if(result==='heads'){heads++;coin.style.transform='rotateY(0)'}
+else{tails++;coin.style.transform='rotateY(180deg)'}
+results.push(result);
+document.getElementById('result').textContent=result.toUpperCase()+'!';
+document.getElementById('result').className='result '+result;
+document.getElementById('hCount').textContent=heads;document.getElementById('tCount').textContent=tails;
+document.getElementById('total').textContent=heads+tails;
+var total=heads+tails;var hp=total?Math.round(heads/total*100):50;var tp=total?100-hp:50;
+document.getElementById('hBar').style.width=hp+'%';document.getElementById('tBar').style.width=tp+'%';
+document.getElementById('hPct').textContent=hp+'% Heads';document.getElementById('tPct').textContent=tp+'% Tails';
+document.getElementById('hist').innerHTML=results.slice(-20).map(function(r){return '<span class="item '+r+'">'+r.charAt(0).toUpperCase()+'</span>'}).join('');
+btn.disabled=false;},650);
+}
+</script></body></html>
